@@ -25,17 +25,51 @@ menuItems = new Array(
 function makeSelect(name, minRange, maxRange)
 {
 	var t= "";
-	t = "<select name='" + name + "' size='1' onchange=tableChange()>";
+	t = "<select name='" + name + "' size='1' onchange=tableChange(this.value,name)>";
 	for (j=minRange; j<=maxRange; j++)
 	   t += "<option>" + j + "</option>";
 	t+= "</select>"; 
 	return t;
 }
 
-function tableChange(){
-
-	document.write("Siker more like SIKE NERD")
+function tableChange(val, x){
+    /*document.write(document.getElementById("table").rows[row].cells[0].innerHTML);*/
+	/*document.write("Siker more like SIKE NERD");*/
+    
+   /*obtains the row not sure if this is the intended method cause it seems pretty hacky*/
+    var str = x;
+    var ar = str.split("n");
+    row = parseInt(ar[1])+1;
+   
+    /*gets the new cost*/
+    var itemcost = document.getElementById("table").rows[row].cells[2].innerHTML;
+    var itmar = itemcost.split(" ")
+    var itm = parseFloat(itmar[2]);
+    
+    document.getElementById("table").rows[row].cells[3].innerHTML= "$ " + itm*val;
+    /*document.getElementById("table").rows[row].cells[2].innerHTML= "fae";
+    document.getElementById("table").rows[row].cells[3].innerHTML= itemcost;*/
+  
+    /*calc subtotal*/
+    var subtotal = 0;
+    
+    for(var i = 1; i< document.getElementById("table").rows.length; i++)
+    {
+       itemcost = document.getElementById("table").rows[i].cells[3].innerHTML;
+       itmar = itemcost.split(" ")
+       
+       itm = parseFloat(itmar[1]);
+      subtotal = subtotal + itm;
+    }
+      var tax = parseFloat((subtotal*.0625).toFixed(2))
+    document.getElementById("subtotal").innerHTML = "Subtotal: $ " + subtotal;
+    document.getElementById("tax").innerHTML = "Mass Tax 6.25%: $ " + tax;
+    document.getElementById("total").innerHTML = "Total: $ " +  (subtotal + tax)
+    
 }
+
+
+
 </script>
 
 <h1>Jade Delight</h1>
@@ -51,7 +85,7 @@ function tableChange(){
 	<input type="radio"  name='p_or_d' value = 'delivery'/>
 	Delivery
 </p>
-<table border="0" cellpadding="3">
+<table border="0" cellpadding="3" id="table">
   <tr>
     <th>Select Item</th>
     <th>Item Name</th>
@@ -67,8 +101,10 @@ function tableChange(){
 	  s += makeSelect("quan" + i, 0, 10);
 	  s += "</td><td>" + menuItems[i].name + "</td>";
 	  s += "<td> $ " + menuItems[i].cost.toFixed(2) + "</td>";
-	  s += "<td>$<input type='text' name='cost'/></td></tr>";
+	  s += "<td>$ 0</td></tr>";
   }
+
+ /* s += "<td>$<input type='text' name='cost'/></td></tr>";*/
   document.writeln(s);
 </script>
 
@@ -76,13 +112,11 @@ function tableChange(){
 
 
 </table>
-<p>Subtotal: 
-   $<input type="text"  name='subtotal' id="subtotal" />
+<p  name='subtotal' id="subtotal" > Subtotal: $
 </p>
-<p>Mass tax 6.25%:
-  $ <input type="text"  name='tax' id="tax" />
+<p  name='tax' id="tax"> Mass tax 6.25%: $  
 </p>
-<p>Total: $ <input type="text"  name='total' id="total" />
+<p name='total' id="total" > Total: $   
 </p>
 
 <input type = "submit" value = "Submit Order" />
